@@ -25,36 +25,38 @@ Cat.prototype.createImage = function() {
     this.image = image
 }
 
-function Shower() {
-    this.nameToShow = document.querySelector('#name-to-show')
-    this.imageToShow = document.querySelector('.cat-image')
-    this.counterToShow = document.querySelector('.counter')
-    this.showerAside = document.querySelector('.list-of-cats')
-}
-Shower.prototype.showCat = function(catObj) {
-    this.nameToShow.textContent = catObj.name
-    if (this.imageToShow.childElementCount > 0) {
-        this.imageToShow.firstElementChild.remove()
+var shower = {
+    nameToShow: document.querySelector('#name-to-show'),
+    imageToShow: document.querySelector('.cat-image'),
+    counterToShow: document.querySelector('.counter'),
+    showerAside: document.querySelector('.list-of-cats'),
+    
+    showCat: function(catObj) {
+        this.nameToShow.textContent = catObj.name
+        if (this.imageToShow.childElementCount > 0) {
+            this.imageToShow.firstElementChild.remove()
+        }
+        this.counterToShow.textContent = catObj.count
+        let obj = this
+        function count() {
+            catObj.count++
+            obj.counterToShow.textContent = catObj.count
+        }
+        if (!catObj.hasEventListener) {
+            catObj.image.addEventListener('click', count)
+            catObj.hasEventListener = true
+        }
+        catObj.image.style.width = 'inherit'
+        catObj.image.style.height = 'inherit'
+        this.imageToShow.appendChild(catObj.image)
     }
-    this.counterToShow.textContent = catObj.count
-    let obj = this
-    function count() {
-        catObj.count++
-        obj.counterToShow.textContent = catObj.count
-    }
-    if (!catObj.hasEventListener) {
-        catObj.image.addEventListener('click', count)
-        catObj.hasEventListener = true
-    }
-    catObj.image.style.width = 'inherit'
-    catObj.image.style.height = 'inherit'
-    this.imageToShow.appendChild(catObj.image)
 }
 
-function Viewer() {
-    this.listOfCats = []
-    this.shower = new Shower()
-    this.dates  = {cat1: {name: 'Floppy', 
+
+var viewer = {
+    listOfCats: [],
+    shower: shower,
+    dates : {cat1: {name: 'Floppy', 
                         source: 'img/cat.jpg'},
                 cat2: {name: 'Mr. happy', 
                         source: 'img/cat2.jpg'},
@@ -63,30 +65,29 @@ function Viewer() {
                 cat4: {name: 'Browny', 
                         source: 'img/cat4.jpg'},
                 cat5: {name: 'Dunny', 
-                        source: 'img/cat5.jpg'}}
-}
-Viewer.prototype.createCats = function() {
-    for (let n = 1; n <= 5; n++) {
-        this.listOfCats.push(new Cat(this.dates['cat' + n]['name'], this.dates['cat' + n]['source']))
-    }
-    for (let index = 0; index < this.listOfCats.length; index++) {
-        this.listOfCats[index].createCatToShow()
-        this.listOfCats[index].createImage()
-    }
-}
-Viewer.prototype.showCatsAside = function() {
-    for (let index = 0; index < this.listOfCats.length; index++) {
-        let catToShow = this.listOfCats[index].catToShow
-        let obj = this
-        catToShow.addEventListener('click', function(event) {
-            if (event.target.nodeName === 'SPAN' || event.target.nodeName === 'IMG') {
-                obj.shower.showCat(obj.listOfCats[index])
-            }
-        })
-        this.shower.showerAside.appendChild(catToShow)
+                        source: 'img/cat5.jpg'}},
+    createCats: function() {
+        for (let n = 1; n <= 5; n++) {
+            this.listOfCats.push(new Cat(this.dates['cat' + n]['name'], this.dates['cat' + n]['source']))
+        }
+        for (let index = 0; index < this.listOfCats.length; index++) {
+            this.listOfCats[index].createCatToShow()
+            this.listOfCats[index].createImage()
+        }
+    },
+    showCatsAside: function() {
+        for (let index = 0; index < this.listOfCats.length; index++) {
+            let catToShow = this.listOfCats[index].catToShow
+            let obj = this
+            catToShow.addEventListener('click', function(event) {
+                if (event.target.nodeName === 'SPAN' || event.target.nodeName === 'IMG') {
+                    obj.shower.showCat(obj.listOfCats[index])
+                }
+            })
+            this.shower.showerAside.appendChild(catToShow)
+        }
     }
 }
 
-let viewer = new Viewer()
 viewer.createCats()
 viewer.showCatsAside()

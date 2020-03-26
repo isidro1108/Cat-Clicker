@@ -58,7 +58,7 @@ span {
     color: #ffffff;
     transition: 0.3s;
 }
-img, .cat-container span:hover{
+img, .cat-container span:hover {
     cursor: pointer;
     color: #9f67e7;
 }
